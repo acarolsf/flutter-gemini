@@ -51,4 +51,4 @@ app.*.map.json
 /web
 
 # .env
-# *.env
+*.env
