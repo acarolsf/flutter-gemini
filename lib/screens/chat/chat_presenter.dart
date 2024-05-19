@@ -2,6 +2,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_gemini/screens/chat/chat_repository.dart';
 
 abstract class ChatDelegate {
+  showLoading();
+  hideLoading();
   scrollPage();
   updateWidgets();
 }
@@ -14,6 +16,8 @@ class ChatPresenter {
 
   final ChatDelegate? view;
   late ChatRepository _repository;
+
+  bool isLoading = false;
 
   List<Map<String, dynamic>> chatHistory = [];
   String? file;
@@ -32,6 +36,7 @@ class ChatPresenter {
   }
 
   Future<void> sendAnswer(String text) async {
+    view?.showLoading();
     if (text.isNotEmpty) {
       if (file != null) {
         chatHistory.add({
@@ -55,6 +60,7 @@ class ChatPresenter {
     await getAnswerFromAI(text);
 
     view?.updateWidgets();
+    view?.hideLoading();
     view?.scrollPage();
   }
 
@@ -63,5 +69,7 @@ class ChatPresenter {
 
     chatHistory.add(response);
     file = null;
+    view?.updateWidgets();
+    view?.scrollPage();
   }
 }

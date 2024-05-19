@@ -14,11 +14,12 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> implements ChatDelegate {
-  late final _presenter = ChatPresenter();
-
   final TextEditingController _chatController = TextEditingController();
-
   final ScrollController _scrollController = ScrollController();
+
+  late final _presenter = ChatPresenter(view: this);
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class _ChatPageState extends State<ChatPage> implements ChatDelegate {
       body: SafeArea(
         child: Stack(
           children: [
-            SizedBox(
+            Container(
               height: MediaQuery.of(context).size.height - 160,
               child: ListView.builder(
                 itemCount: _presenter.chatHistory.length,
@@ -155,6 +156,7 @@ class _ChatPageState extends State<ChatPage> implements ChatDelegate {
                     const SizedBox(
                       width: 4.0,
                     ),
+                    isLoading ? const CircularProgressIndicator() :
                     MaterialButton(
                       onPressed: () async {
                         await _presenter.sendAnswer(_chatController.text);
@@ -204,5 +206,19 @@ class _ChatPageState extends State<ChatPage> implements ChatDelegate {
   @override
   updateWidgets() {
     setState(() {});
+  }
+  
+  @override
+  hideLoading() {
+   setState(() {
+     isLoading = false;
+   });
+  }
+  
+  @override
+  showLoading() {
+    setState(() {
+      isLoading = true;
+    });
   }
 }
