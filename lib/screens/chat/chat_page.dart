@@ -87,10 +87,11 @@ class _ChatPageState extends State<ChatPage> implements ChatDelegate {
               child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                height: 60,
+                height: _presenter.file == null ? 80 : 160,
                 width: double.infinity,
                 color: Colors.white,
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     MaterialButton(
                       onPressed: () async {
@@ -101,6 +102,7 @@ class _ChatPageState extends State<ChatPage> implements ChatDelegate {
                           borderRadius: BorderRadius.circular(80.0)),
                       padding: const EdgeInsets.all(0.0),
                       child: Ink(
+                        height: 42,
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
                               begin: Alignment.topLeft,
@@ -127,67 +129,97 @@ class _ChatPageState extends State<ChatPage> implements ChatDelegate {
                       width: 4.0,
                     ),
                     Expanded(
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          border: GradientBoxBorder(
-                            gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xFFF69170),
-                                  Color(0xFF7D96E6),
-                                ]),
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: TextField(
-                            decoration: const InputDecoration(
-                              hintText: "Type a message",
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Visibility(
+                            visible: _presenter.file != null,
+                            child: Container(
+                              padding: EdgeInsets.all(8),
+                              child: Stack(
+                                alignment: Alignment.topRight,
+                                children: [
+                                  IconButton(
+                                    onPressed: () => _presenter.removeImage(),
+                                    icon: Icon(
+                                      Icons.close,
+                                      color: Colors.black12,
+                                      size: 50,
+                                    ),
+                                  ),
+                                  Image.file(File(_presenter.file ?? ''),
+                                      width: 100),
+                                ],
+                              ),
                             ),
-                            controller: _chatController,
                           ),
-                        ),
+                          Container(
+                            decoration: const BoxDecoration(
+                              border: GradientBoxBorder(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color(0xFFF69170),
+                                      Color(0xFF7D96E6),
+                                    ]),
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50.0)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: TextField(
+                                decoration: const InputDecoration(
+                                  hintText: "Type a message",
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(8.0),
+                                ),
+                                controller: _chatController,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(
                       width: 4.0,
                     ),
-                    isLoading ? const CircularProgressIndicator() :
-                    MaterialButton(
-                      onPressed: () async {
-                        await _presenter.sendAnswer(_chatController.text);
-                        _chatController.clear();
-                      },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(80.0)),
-                      padding: const EdgeInsets.all(0.0),
-                      child: Ink(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color.fromARGB(255, 243, 65, 252),
-                                Color.fromARGB(255, 74, 116, 255),
-                              ]),
-                          borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                        ),
-                        child: Container(
-                            constraints: const BoxConstraints(
-                                minWidth: 88.0,
-                                minHeight:
-                                    36.0), // min sizes for Material buttons
-                            alignment: Alignment.center,
-                            child: const Icon(
-                              Icons.send,
-                              color: Colors.white,
-                            )),
-                      ),
-                    )
+                    isLoading
+                        ? const CircularProgressIndicator()
+                        : MaterialButton(
+                            onPressed: () async {
+                              await _presenter.sendAnswer(_chatController.text);
+                            },
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(80.0)),
+                            padding: const EdgeInsets.all(0.0),
+                            child: Ink(
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color.fromARGB(255, 243, 65, 252),
+                                      Color.fromARGB(255, 74, 116, 255),
+                                    ]),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50.0)),
+                              ),
+                              child: Container(
+                                  constraints: const BoxConstraints(
+                                      minWidth: 88.0,
+                                      minHeight:
+                                          36.0), // min sizes for Material buttons
+                                  alignment: Alignment.center,
+                                  child: const Icon(
+                                    Icons.send,
+                                    color: Colors.white,
+                                  )),
+                            ),
+                          )
                   ],
                 ),
               ),
@@ -207,18 +239,23 @@ class _ChatPageState extends State<ChatPage> implements ChatDelegate {
   updateWidgets() {
     setState(() {});
   }
-  
+
   @override
   hideLoading() {
-   setState(() {
-     isLoading = false;
-   });
+    setState(() {
+      isLoading = false;
+    });
   }
-  
+
   @override
   showLoading() {
     setState(() {
       isLoading = true;
     });
+  }
+
+  @override
+  clearText() {
+    _chatController.clear();
   }
 }
