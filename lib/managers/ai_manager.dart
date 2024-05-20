@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
@@ -34,7 +35,7 @@ class AIManager {
       safetySettings: safetySettings
     );
     _chat = _model.startChat();
-    print('init ai manager');
+    debugPrint('init ai manager');
 
   }
 
@@ -77,7 +78,7 @@ class AIManager {
 
   Future<CountTokensResponse> countToken(String prompt) async {
     final tokenCount = await _model.countTokens([Content.text(prompt)]);
-    print('Token count: ${tokenCount.totalTokens}');
+    debugPrint('Token count: ${tokenCount.totalTokens}');
     return tokenCount;
   }
 }

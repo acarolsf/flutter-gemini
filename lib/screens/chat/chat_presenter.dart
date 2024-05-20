@@ -1,4 +1,5 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gemini/screens/chat/chat_repository.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
@@ -26,7 +27,7 @@ class ChatPresenter {
   String? file;
 
   void removeImage() {
-    print('remove image');
+    debugPrint('remove image');
     file = null;
     view?.updateWidgets();
   }
@@ -36,7 +37,7 @@ class ChatPresenter {
       type: FileType.custom,
       allowedExtensions: ['jpg', 'jpeg', 'png'],
     );
-    print(result);
+    debugPrint(result?.files.first.path);
     if (result != null) {
       file = result.files.first.path;
     }
@@ -84,12 +85,12 @@ class ChatPresenter {
   }
 
   Future<void> getHistory() async {
-    print('get history');
+    debugPrint('get history');
     var response = await _repository.getHistory();
 
     response.forEach((element) {
       var message = element.parts.first as TextPart;
-      print(message);
+      debugPrint(message.text);
       chatHistory.add({
         'time': DateTime.now(),
         'message': message.text,
