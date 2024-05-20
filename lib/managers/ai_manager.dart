@@ -33,9 +33,7 @@ class AIManager {
       generationConfig: GenerationConfig(maxOutputTokens: 100),
       safetySettings: safetySettings
     );
-    _chat = _model.startChat(history: [
-
-    ]);
+    _chat = _model.startChat();
     print('init ai manager');
 
   }
@@ -56,7 +54,6 @@ class AIManager {
       final imageParts = [
         DataPart('image/jpeg', firstImage),
       ];
-
       response = await _visionModel.generateContent([
         Content.multi([prompt, ...imageParts])
       ]);

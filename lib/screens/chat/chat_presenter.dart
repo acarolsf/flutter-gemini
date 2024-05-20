@@ -1,9 +1,11 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_gemini/screens/chat/chat_repository.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
 
 abstract class ChatDelegate {
   showLoading();
   hideLoading();
+  clearText();
   scrollPage();
   updateWidgets();
 }
@@ -12,6 +14,7 @@ class ChatPresenter {
 
   ChatPresenter({this.view}) {
     _repository = ChatRepository();
+    getHistory();
   }
 
   final ChatDelegate? view;
@@ -21,6 +24,12 @@ class ChatPresenter {
 
   List<Map<String, dynamic>> chatHistory = [];
   String? file;
+
+  void removeImage() {
+    print('remove image');
+    file = null;
+    view?.updateWidgets();
+  }
 
   Future<void> getFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -37,6 +46,8 @@ class ChatPresenter {
 
   Future<void> sendAnswer(String text) async {
     view?.showLoading();
+    view?.clearText();
+
     if (text.isNotEmpty) {
       if (file != null) {
         chatHistory.add({
@@ -61,7 +72,6 @@ class ChatPresenter {
 
     view?.updateWidgets();
     view?.hideLoading();
-    view?.scrollPage();
   }
 
   Future<void> getAnswerFromAI(String text) async {
@@ -69,6 +79,25 @@ class ChatPresenter {
 
     chatHistory.add(response);
     file = null;
+    view?.updateWidgets();
+    view?.scrollPage();
+  }
+
+  Future<void> getHistory() async {
+    print('get history');
+    var response = await _repository.getHistory();
+
+    response.forEach((element) {
+      var message = element.parts.first as TextPart;
+      print(message);
+      chatHistory.add({
+        'time': DateTime.now(),
+        'message': message.text,
+        'isSender': element.role == 'user',
+        'isImage': false
+      });
+    });
+
     view?.updateWidgets();
     view?.scrollPage();
   }
