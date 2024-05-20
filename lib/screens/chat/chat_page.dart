@@ -61,7 +61,7 @@ class _ChatPageState extends State<ChatPage> implements ChatDelegate {
                             ),
                           ],
                           color: (_presenter.chatHistory[index]["isSender"]
-                              ? const Color(0xFFF69170)
+                              ? Color.fromARGB(255, 165, 57, 243)
                               : Colors.white),
                         ),
                         padding: const EdgeInsets.all(16),
@@ -155,14 +155,15 @@ class _ChatPageState extends State<ChatPage> implements ChatDelegate {
                             ),
                           ),
                           Container(
+                            height: 45,
                             decoration: const BoxDecoration(
                               border: GradientBoxBorder(
                                 gradient: LinearGradient(
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      Color(0xFFF69170),
-                                      Color(0xFF7D96E6),
+                                      Color.fromARGB(255, 252, 64, 245),
+                                      Color.fromARGB(255, 61, 105, 247),
                                     ]),
                               ),
                               borderRadius:
@@ -196,7 +197,7 @@ class _ChatPageState extends State<ChatPage> implements ChatDelegate {
                                 borderRadius: BorderRadius.circular(80.0)),
                             padding: const EdgeInsets.all(0.0),
                             child: Ink(
-                              height: 60,
+                              height: 42,
                               decoration: const BoxDecoration(
                                 gradient: LinearGradient(
                                     begin: Alignment.topLeft,
