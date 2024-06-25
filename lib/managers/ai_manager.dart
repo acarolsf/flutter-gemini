@@ -29,7 +29,7 @@ class AIManager {
       safetySettings: safetySettings
     );
     _visionModel = GenerativeModel(
-      model: 'gemini-pro-vision',
+      model: 'gemini-1.5-flash', // gemini-pro-vision is deprecated
       apiKey: apiKey ?? "",
       generationConfig: GenerationConfig(maxOutputTokens: 100),
       safetySettings: safetySettings
